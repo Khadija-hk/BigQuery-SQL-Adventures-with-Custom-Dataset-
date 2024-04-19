@@ -1,0 +1,79 @@
+Display top 5 rows of the dataset
+`SELECT * FROM `jump-demo-417214.google_apps.googleplaystore` LIMIT 5;`
+
+Display last 3 rows of the dataset
+`WITH NumberedRows AS (
+    SELECT *, ROW_NUMBER() OVER () AS rn
+    FROM `jump-demo-417214.google_apps.googleplaystore`
+)
+SELECT *
+    FROM NumberedRows
+    WHERE rn > (SELECT COUNT(*) - 3 FROM `jump-demo-417214.google_apps.googleplaystore`);`
+
+
+Number of rows
+`SELECT COUNT(*) AS Number_rows FROM `jump-demo-417214.google_apps.googleplaystore`;`
+
+Number of columns
+`SELECT count(*) as No_of_Column FROM jump-demo-417214.google_apps.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME ='googleplaystore';`
+
+Total number of app titles which contain 'dating'
+`SELECT COUNT(*) FROM `jump-demo-417214.google_apps.googleplaystore` 
+    WHERE App LIKE '%Dating%';`
+
+Find average app rating
+`SELECT AVG(IF(is_nan(Rating), NULL, Rating)) AS avg_rating
+FROM `jump-demo-417214.google_apps.googleplaystore`;`
+
+
+Find total number of unique categories
+`SELECT
+  COUNT(DISTINCT Category) AS num_unique_categories
+FROM
+  `jump-demo-417214.google_apps.googleplaystore`;`
+
+Total number of app having 5-star rating
+`SELECT COUNT(*) AS num_5star
+FROM `jump-demo-417214.google_apps.googleplaystore`
+WHERE Rating = 5;`
+
+Average value of reviews
+`SELECT AVG(CAST(Reviews AS INT64)) AS average_reviews
+FROM `jump-demo-417214.google_apps.googleplaystore`;`
+
+Total number of free and paid apps
+`SELECT
+  SUM(IF(Type = 'Free', 1, 0)) AS num_free_apps,
+  SUM(IF(Type = 'Paid', 1, 0)) AS num_paid_apps
+FROM `jump-demo-417214.google_apps.googleplaystore`;`
+
+App has maximum reviews
+`SELECT App
+FROM `jump-demo-417214.google_apps.googleplaystore`
+ORDER BY CAST(Reviews AS INT64) DESC
+LIMIT 1;`
+
+Top 5 apps having highest reviews
+`SELECT App, Reviews
+FROM `jump-demo-417214.google_apps.googleplaystore`
+ORDER BY CAST(Reviews AS INT64) DESC
+LIMIT 5;`
+
+Average rating of free and paid apps
+`SELECT
+  Type,
+  AVG(Rating) AS average_rating
+FROM `jump-demo-417214.google_apps.googleplaystore`
+GROUP BY Type;`
+
+Top 5 apps having maximum installs
+`SELECT App, Installs
+FROM `jump-demo-417214.google_apps.googleplaystore`
+ORDER BY CASE
+  WHEN Installs = 'Free' THEN 0
+  WHEN Installs = '0' THEN 0
+  WHEN Installs LIKE '%+' THEN CAST(REPLACE(Installs, '+', '') AS INT64)
+  ELSE CAST(Installs AS INT64)
+  END DESC
+LIMIT 5;`
+
